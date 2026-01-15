@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
-import { getCurrentUser } from "aws-amplify/auth";
+// import { getCurrentUser } from "aws-amplify/auth";
 import SubscriptionItem from "../components/SubscriptionItem";
+import { useAuth } from "../contexts/AuthContext";
 
 const client = generateClient<Schema>();
 
@@ -24,14 +25,17 @@ export type ApiResponse = {
 /* ---------- Component ---------- */
 
 export default function Subscription() {
+
+  const { user, loading: userLoading } = useAuth();
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchSubscription() {
+      if (!user) return;
       try {
-        const user = await getCurrentUser();
+        // const user = await getCurrentUser();
         const email = user?.signInDetails?.loginId;
 
         const result = await client.queries.getSubscription(
@@ -60,8 +64,12 @@ export default function Subscription() {
       }
     }
 
-    fetchSubscription();
-  }, []);
+    if (!userLoading) fetchSubscription();
+  }, [user, userLoading]);
+
+  if (userLoading || loading) return <p>Loading...</p>;
+
+  
 
  
   /* ---------- UI ---------- */
