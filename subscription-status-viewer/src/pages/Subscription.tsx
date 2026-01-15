@@ -29,6 +29,7 @@ export default function Subscription() {
   const { user, loading: userLoading } = useAuth();
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -69,10 +70,37 @@ export default function Subscription() {
 
   if (userLoading || loading) return <p>Loading...</p>;
 
-  
+  /* ---------- Billing Portal ---------- */
+
+  async function handleBillingPortal() {
+    try {
+      setPortalLoading(true);
+
+      const result =
+        await client.queries.createBillingPortal(
+          {},
+          { authMode: "userPool" }
+        );
+        
+      console.log("Billing Portal Result:", result);
+
+      if (!result.data?.url) {
+        throw new Error("No portal URL returned");
+      }
+
+      // Redirect user to Stripe
+      window.location.href = result.data.url;
+    } catch (err: any) {
+      alert(err.message || "Failed to open portal");
+    } finally {
+      setPortalLoading(false);
+    }
+  }
+
 
  
   /* ---------- UI ---------- */
+
 
   if (loading) return <p>Loading subscription...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -80,8 +108,28 @@ export default function Subscription() {
 
   return (
     <div>
-        <h2>Your Subscriptions</h2>
-        <SubscriptionItem subscriptions={subscriptions} />
+      <h2>Your Subscriptions</h2>
+
+      <SubscriptionItem subscriptions={subscriptions} />
+
+      {/* Billing Portal Button */}
+      <button
+        onClick={handleBillingPortal}
+        disabled={portalLoading}
+        style={{
+          marginTop: 20,
+          padding: "10px 20px",
+          background: "#635bff",
+          color: "#fff",
+          border: "none",
+          borderRadius: 6,
+          cursor: "pointer",
+        }}
+      >
+        {portalLoading
+          ? "Redirecting..."
+          : "Manage Billing"}
+      </button>
     </div>
-    );
+  );
 }

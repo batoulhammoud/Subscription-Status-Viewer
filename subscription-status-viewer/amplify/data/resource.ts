@@ -1,5 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { getSubscription } from '../functions/getSubscription/resource';
+import { createBillingPortal } from '../functions/createBillingPortalLink/resource';
+
 // amplify/data/resource.ts
 
 const schema = a.schema({
@@ -11,6 +13,12 @@ const schema = a.schema({
     .returns(a.json()) // Adjust based on your actual return type
     .handler(a.handler.function(getSubscription))
     // FIX: Explicitly allow authenticated users to call this query
+    .authorization(allow => [allow.authenticated()]),
+
+
+    createBillingPortal: a.query()
+    .returns(a.json()) // { url: "..." }
+    .handler(a.handler.function(createBillingPortal))
     .authorization(allow => [allow.authenticated()]),
 
 

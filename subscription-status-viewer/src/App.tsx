@@ -59,6 +59,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/subscription" element={<Subscription />} />
+              
               </Routes>
             </div>
           </BrowserRouter>
