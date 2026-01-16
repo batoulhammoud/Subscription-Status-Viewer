@@ -2,28 +2,20 @@ import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 import { getSubscription } from '../functions/getSubscription/resource';
 import { createBillingPortal } from '../functions/createBillingPortalLink/resource';
 
-// amplify/data/resource.ts
-
 const schema = a.schema({
-  // Define your custom query here
   getSubscription: a.query()
     .arguments({
       email: a.string(),
     })
-    .returns(a.json()) // Adjust based on your actual return type
+    .returns(a.json()) 
     .handler(a.handler.function(getSubscription))
-    // FIX: Explicitly allow authenticated users to call this query
     .authorization(allow => [allow.authenticated()]),
 
-
     createBillingPortal: a.query()
-    .returns(a.json()) // { url: "..." }
+    .returns(a.json()) 
     .handler(a.handler.function(createBillingPortal))
     .authorization(allow => [allow.authenticated()]),
 
-
-
-  
 });
 
 export type Schema = ClientSchema<typeof schema>;

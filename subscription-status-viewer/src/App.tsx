@@ -10,7 +10,7 @@ function App() {
   return (
     <Authenticator>
       {({ signOut }) => (
-        /* Wrap the internal app with UserProvider so all routes can access the user */
+        //Wrap the internal app with UserProvider so all routes can access the user
         <AuthProvider>
           <BrowserRouter>
             <div style={{ padding: 20 }}>
