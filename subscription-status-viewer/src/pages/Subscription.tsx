@@ -3,6 +3,8 @@ import { generateClient } from "aws-amplify/data";
 import type { Schema } from "../../amplify/data/resource";
 import { useAuth } from "../contexts/AuthContext";
 import SubscriptionItem from "../components/SubscriptionItem";
+import { logEvent } from "../lib/amplitude";
+
 
 const client = generateClient<Schema>();
 
@@ -74,6 +76,14 @@ export default function Subscription() {
     }
 
     if (!userLoading) fetchSubscription();
+  
+  
+  
+  
+  
+    logEvent("Viewed Subscription Page", {
+    userId: user?.username || "unknown",
+    });
   }, [user, userLoading]);
 
   /* ---------- Manage Billing Portal ---------- */
@@ -82,6 +92,10 @@ export default function Subscription() {
       setPortalLoading(true);
 
       const result = await client.queries.createBillingPortal({}, { authMode: "userPool" });
+        logEvent("Clicked Manage Billing", {
+        userId: user?.username || "unknown",
+      });
+    
       const parsed = typeof result.data === "string" ? JSON.parse(result.data) : result.data;
 
       if (!parsed?.url) throw new Error("No portal URL returned");

@@ -1,10 +1,37 @@
 <!doctype html>
 <html lang="en">
+  
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>subscription-status-viewer</title>
+
+    <script src="https://cdn.amplitude.com/script/3a56c73c56d454e242ea6f8e9f98704e.js"></script>
+      <script>
+        window.amplitude.add(
+          window.sessionReplay.plugin({ sampleRate: 1 })
+        );
+
+        window.amplitude.init(
+          "3a56c73c56d454e242ea6f8e9f98704e",
+          {
+            fetchRemoteConfig: true,
+            autocapture: {
+              attribution: true,
+              fileDownloads: true,
+              formInteractions: true,
+              pageViews: true,
+              sessions: true,
+              elementInteractions: true,
+              networkTracking: true,
+              webVitals: true,
+              frustrationInteractions: true,
+            },
+          }
+        );
+    </script>
+
   </head>
   <body>
     <div id="root"></div>
