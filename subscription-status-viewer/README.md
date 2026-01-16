@@ -1,117 +1,74 @@
-# React + TypeScript + Vite
+# Subscription Status Viewer
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A minimal full-stack application to view user subscriptions and billing history using **AWS Amplify**, **React**, and **Stripe API**.  
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Architecture Decisions
 
-## React Compiler
+- **Frontend**  
+  - React + TypeScript for type safety and modular components.  
+  - **React Router** for page navigation (`Dashboard` & `Subscription` pages).  
+  - **Context API (`useAuth`)** to store and share user authentication state globally.  
+  - Components like `SubscriptionItem` for reusability and separation of concerns.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Backend**  
+  - **AWS Amplify Gen 2** for GraphQL API + Lambda resolvers.  
+  - **Stripe API** for subscription & invoice data.  
+  - Lambda handlers fetch subscriptions, invoice history, and generate Stripe billing portal URLs.  
+  - Used **environment variables** for secure API keys.
 
-## Expanding the ESLint configuration
+- **Data Flow**  
+  1. User logs in → `useAuth` stores user info.  
+  2. Frontend queries Amplify GraphQL API → Lambda resolver fetches data from Stripe.  
+  3. Returns structured data: subscriptions + billing history → UI displays in a table and card layout.  
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **UI Decisions**  
+  - Card-style subscription display.  
+  - Buttons for **Manage Billing** and **View Billing History**.  
+  - Billing history displayed in a table with invoice details and links to receipts.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Assumptions
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Each user maps to **one Stripe customer**, stored via an environment variable (`STRIPE_CUSTOMER_ID`).  
+- Billing portal and invoice data are fetched **on-demand**, not persisted locally.  
+- All users are authenticated via **Cognito user pools**, allowing safe API calls.  
+- Subscription items map to product names using Stripe’s products API.  
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Potential Improvements (Given More Time)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-High-Level Architecture:
+- **Dynamic user → Stripe customer mapping**  
+  - Persist mapping in a database instead of environment variables.  
 
-Frontend (React + TS)
-        |
-        | (Authenticated requests)
-        v
-Amplify API Gateway
-        |
-        v
-Backend Functions (Node + TS)
-        |
-        v
-Stripe API
+- **Webhooks**  
+  - Listen to Stripe events (`invoice.paid`, `subscription.updated`) to update subscription state in real-time.  
+
+- **Enhanced UI/UX**  
+  - Subscription timeline visualizing renewal dates and status.  
+  - Responsive and polished dashboard with icons, metrics, and multiple subscription plans.  
+
+- **Caching / Performance**  
+  - Cache product names and invoices to reduce repeated Stripe API calls.  
+
+- **Analytics**  
+  - Track user interactions (viewing subscriptions, clicking “Manage Billing”) with Amplitude or similar.
+
+- **Testing**  
+  - Increase unit and integration test coverage
+
+---
+
+## How to Run
+
+1. Clone the repository and install dependencies:  
+```bash
+git clone <repo-url>
+cd subscription-status-viewer
+npm install
 
 
 
-Architecture
-
-Frontend
-- React + TypeScript
-- Amplify Auth
-- Protected routes
-- API wrapper layer
-
-Backend
-- Amplify Functions (Node + TS)
-- Stripe API integration
-- Env-based secret management
-
-Security
-- Stripe keys stored in env
-- Auth enforced before API access
-- No sensitive data in client
-
-Assumptions
-- Single hardcoded Stripe customer
-- No persistence layer
-
-Key Principles
-
-✅ Frontend never talks to Stripe
-✅ Secrets live only in backend
-✅ Auth enforced before API access
-✅ Thin server functions (single responsibility)

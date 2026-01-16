@@ -1,39 +1,3 @@
-
-
-// import { BrowserRouter } from "react-router-dom";
-// import { Routes, Route } from "react-router";
-// import Dashboard from "./pages/Dashboard";
-// import { Authenticator } from "@aws-amplify/ui-react";
-// import "@aws-amplify/ui-react/styles.css";
-// import Subscription from "./pages/Subscription";
-// import { UserProvider } from "./context/UserContext";
-
-
-
-// function App() {
-//   return (
-//     <Authenticator>
-//       {({ signOut }) => (
-//         <BrowserRouter>
-//           <div style={{ padding: 20 }}>
-//             <button onClick={signOut}>Sign out</button>
-
-//             <Routes>
-//               <Route path="/" element={<Dashboard />} />
-//               <Route path="/subscription" element={<Subscription />} />
-            
-//             </Routes>
-//           </div>
-//         </BrowserRouter>
-//       )}
-//     </Authenticator>
-//   );
-// }
-
-// export default App;
-
-
-
 import { BrowserRouter } from "react-router-dom";
 import { Routes, Route } from "react-router";
 import Dashboard from "./pages/Dashboard";
@@ -50,8 +14,24 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <div style={{ padding: 20 }}>
-              <nav style={{ marginBottom: 20 }}>
-                <button onClick={signOut} style={{ marginRight: 10 }}>
+              <nav
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginBottom: 20,
+                }}
+              >
+                <button
+                  onClick={signOut}
+                  style={{
+                    padding: "8px 16px",
+                    background: "#f44336",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: 4,
+                    cursor: "pointer",
+                  }}
+                >
                   Sign out
                 </button>
               </nav>
