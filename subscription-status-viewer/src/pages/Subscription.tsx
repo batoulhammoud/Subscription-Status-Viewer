@@ -87,7 +87,7 @@ export default function Subscription() {
 
       console.log("Billing Portal Result:", result);
 
-      // 🔥 Parse response safely
+      //  Parse response safely
       const parsed =
         typeof result.data === "string"
           ? JSON.parse(result.data)
