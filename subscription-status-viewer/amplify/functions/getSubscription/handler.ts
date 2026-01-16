@@ -57,11 +57,12 @@ import type {
   AppSyncIdentityCognito,
 } from "aws-lambda";
 
+
 export const handler: AppSyncResolverHandler<any, any> = async (
   event
 ) => {
   try {
-    /* 1️⃣ Get user */
+    /*  Get user */
     const identity =
       event.identity as AppSyncIdentityCognito;
 
@@ -73,41 +74,85 @@ export const handler: AppSyncResolverHandler<any, any> = async (
       );
     }
 
-    /* 2️⃣ Map user → stripe customer */
+    /* Map user → stripe customer */
     const stripeCustomerId =
       process.env.STRIPE_CUSTOMER_ID!;
 
-    /* 3️⃣ Init Stripe */
+    /* Init Stripe */
     const stripeClient = new stripe(
       process.env.STRIPE_SECRET_KEY!
     );
 
-    /* 4️⃣ Fetch ALL subscriptions (no filter) */
+    /*Fetch ALL subscriptions (no filter) */
     const subscriptions =
       await stripeClient.subscriptions.list({
         customer: stripeCustomerId,
         status: "all", 
+        expand: ["data.items.data.price"],
       });
 
     // console.log("Fetched subscriptions:", subscriptions);
     // console.log(" subscription status:", subscriptions.data.map(sub => sub.status));
 
+      const productIds = new Set<string>();
 
-    /* 5️⃣ Return actual status from Stripe */
+      subscriptions.data.forEach(sub => {
+        sub.items.data.forEach(item => {
+          productIds.add(item.price.product as string);
+        });
+      });
+
+      const products = await Promise.all(
+        [...productIds].map(id =>
+          stripeClient.products.retrieve(id)
+        )
+      );
+
+      const productMap = products.reduce(
+        (acc, product) => {
+          acc[product.id] = product.name;
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+
+    /*  Return actual status from Stripe */
+    // return {
+    //   userId,
+    //   stripeCustomerId,
+    //   subscriptions: subscriptions.data.map(
+    //     (sub) => ({
+    //       id: sub.id,
+    //       status: sub.status, //  dynamic status
+    //       items: sub.items.data.map(
+    //         (item) => item.price.product
+
+    //       ),
+        
+         
+    //     })
+    //   ),
+    // };
+
+
     return {
       userId,
       stripeCustomerId,
-      subscriptions: subscriptions.data.map(
-        (sub) => ({
-          id: sub.id,
-          status: sub.status, //  dynamic status
-          items: sub.items.data.map(
-            (item) => item.price.product
-          ),
-         
-        })
-      ),
+      subscriptions: subscriptions.data.map(sub => ({
+        id: sub.id,
+        status: sub.status,
+        items: sub.items.data.map(item => {
+          const productId =
+            item.price.product as string;
+
+          return productMap[productId];
+        }),
+      })),
     };
+
+    
+
+  
   } catch (error: any) {
     console.error("Stripe API error:", error);
     throw new Error(
