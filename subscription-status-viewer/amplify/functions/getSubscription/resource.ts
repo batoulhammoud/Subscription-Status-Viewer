@@ -6,8 +6,8 @@ export const getSubscription = defineFunction({
   entry: "./handler.ts", 
   name: "getSubscription",
   environment: { // These stay server-side only
-    STRIPE_SECRET_KEY: "sk_test_51Soou9G3PTiWPNWGuUa42Chju9qhYYmQipBoQ4XIo7DyxinZigQ1uXMw7f694Xn7gpISRihKXu7QnwdtpLkScHcu00OR3750lM",
-    STRIPE_CUSTOMER_ID: "cus_TnGgguRgIeyBHF"
+    STRIPE_SECRET_KEY: "XX",
+    STRIPE_CUSTOMER_ID: "XX"
   },
 });
 
