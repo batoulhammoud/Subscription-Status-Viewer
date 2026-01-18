@@ -28,15 +28,21 @@ A minimal full-stack application to view user subscriptions and billing history 
   - Buttons for **Manage Billing** and **View Billing History**.  
   - Billing history displayed in a table with invoice details and links to receipts.
 
-- **Analytics**  
+- **Analytics (Stretch Goal)**  
   - Track user interactions (viewing subscriptions, clicking “Manage Billing”) with Amplitude.
+
+- **UI Polish (Stretch Goal)** 
+  - Added a **“View Billing History”** button that reveals a table populated with **Stripe invoice data**.
+
 
 ---
 
 ## Assumptions
 
-- Each user maps to **one Stripe customer**, stored via an environment variable (`STRIPE_CUSTOMER_ID`).  
-- Billing portal and invoice data are fetched **on-demand**, not persisted locally.  
+- Each user maps to **one Stripe customer**.  
+- Stripe credentials and customer IDs are securely stored in **AWS Secrets Manager** instead of environment variables. (server-side)
+- Backend functions retrieve secrets at runtime, ensuring no sensitive data is exposed to the frontend or committed to version control.
+- Billing portal and invoice data are fetched **on-demand** from backend Lambda, not persisted locally.  
 - All users are authenticated via **Cognito user pools**, allowing safe API calls.  
 - Subscription items map to product names using Stripe’s products API.  
 
@@ -60,6 +66,12 @@ A minimal full-stack application to view user subscriptions and billing history 
 - **Testing**  
   - Increase unit and integration test coverage
 
+- **Responsiveness**  
+  - Implement a fully responsive layout to support mobile, tablet, and desktop screens  
+  - Optimize spacing, typography, and touch targets for mobile users  
+  - Perform cross-device testing to ensure a seamless user experience
+
+
 ---
 
 ## How to Run
@@ -69,9 +81,24 @@ A minimal full-stack application to view user subscriptions and billing history 
 git clone <repo-url>
 cd subscription-status-viewer
 npm install
-npm run dev
-
-
 ```
-When you first open the app, you’ll be prompted to sign in. Select Create Account to register with your email and password. Enter the verification code sent to your inbox to activate your account; once verified, you can sign in directly using your credentials.
+2. Set Up Environment Variables:
+  - Create a `.env` file in the same directory as `.env.example`.  
+  - Copy the contents from `.env.example` and paste the values provided via email.  
 
+3. Amplify Configuration:
+  - Download the `amplify_outputs.json` file shared via email.  
+  - Place it in the root of the `subscription-status-viewer` folder.  
+    Example path:  
+    `C:\Users\batoul\OneDrive\Desktop\CPOS Assignment\subscription-status-viewer\amplify_outputs.json`
+
+
+4. Run the App:
+```bash
+npm run dev
+```
+
+5. Sign In / Register:
+  - On first open, click Create Account to register with your email and password.
+  - Enter the verification code sent to your inbox to activate your account.
+  - Once verified, you can sign in directly with your credentials.

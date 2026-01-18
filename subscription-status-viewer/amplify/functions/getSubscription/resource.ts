@@ -1,7 +1,10 @@
 import { defineFunction, secret } from "@aws-amplify/backend";
 
 
-//TODO: should i merge those two files under one index.ts file with two consts ??
+//The standard practice for Amplify is to keep the function definition (resource.ts) close to its logic (handler.ts). 
+// If you merge them into one file, you end up with a "Lambda Monolith" where one folder contains multiple handlers, 
+// which can get messy.
+
 export const getSubscription = defineFunction({
   entry: "./handler.ts", 
   name: "getSubscription",

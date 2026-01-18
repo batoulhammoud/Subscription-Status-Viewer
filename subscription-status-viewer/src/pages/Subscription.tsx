@@ -4,7 +4,7 @@ import type { Schema } from "../../amplify/data/resource";
 import { useAuth } from "../contexts/AuthContext";
 import SubscriptionItem from "../components/SubscriptionItem";
 import { logEvent } from "../lib/amplitude";
-
+import ActionButton from "../components/ActionButton";
 
 const client = generateClient<Schema>();
 
@@ -146,37 +146,22 @@ export default function Subscription() {
 
       {/* Action Buttons */}
       <div style={{ display: "flex", gap: 15, marginTop: 30 }}>
-        <button
+        <ActionButton
           onClick={handleBillingPortal}
+          isLoading={portalLoading}
           disabled={portalLoading}
-          style={{
-            padding: "10px 20px",
-            background: "#635bff",
-            color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            cursor: "pointer",
-            flex: 1,
-          }}
-        >
-          {portalLoading ? "Redirecting..." : "Manage Billing"}
-        </button>
+          bgColor="#635bff"
+          btnText="Manage Billing"
+          loadingText="Redirecting..."
+        />
 
-        <button
+        <ActionButton
           onClick={handleBillingHistory}
+          isLoading={historyLoading}
           disabled={historyLoading}
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#4CAF50",
-            color: "#fff",
-            border: "none",
-            borderRadius: 6,
-            cursor: "pointer",
-            flex: 1,
-          }}
-        >
-          {historyLoading ? "Loading..." : "View Billing History"}
-        </button>
+          bgColor="#4CAF50"
+          btnText="View Billing History"
+        />
       </div>
 
       {/* Billing History Table */}
