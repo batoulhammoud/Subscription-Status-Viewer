@@ -58,7 +58,9 @@ A minimal full-stack application to view user subscriptions and billing history 
 
 - **Enhanced UI/UX**  
   - Subscription timeline visualizing renewal dates and status.  
-  - Responsive and polished dashboard with icons, metrics, and multiple subscription plans.  
+  - Responsive and polished dashboard with icons, metrics, and multiple subscription plans.
+  - Filter subscriptions by status (active, trialing, canceled, etc.)  
+  - Sort subscriptions by expiry/renewal date    
 
 - **Caching / Performance**  
   - Cache product names and invoices to reduce repeated Stripe API calls.  

@@ -6,6 +6,19 @@ export type SubscriptionItemProps = {
 
 export default function SubscriptionItem({ subscriptions }: SubscriptionItemProps) {
 
+
+  const statusColor = (status: string) => {
+    switch (status) {
+      case "active":
+        return "#166534"; // green
+      case "trialing":
+        return "#ca8a04"; // yellow
+      default:
+        return "#991b1b"; // red
+    }
+  };
+
+
   return (
     <>
       {subscriptions.map((sub) => (
@@ -45,7 +58,7 @@ export default function SubscriptionItem({ subscriptions }: SubscriptionItemProp
                 fontWeight: "bold",
                 textTransform: "uppercase",
                 backgroundColor: sub.status === "active" ? "#dcfce7" : "#fee2e2",
-                color: sub.status === "active" ? "#166534" : "#991b1b",
+                color: statusColor(sub.status),
               }}
             >
               {sub.status}
